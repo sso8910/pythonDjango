@@ -1,0 +1,358 @@
+*장고(Django)개념정리
+파이썬 가상환경이란?
+->파이썬 프로젝트를 진행할 때 '독립된' 가상환경을 만들어 주는 도구이다.
+
+
+파이썬 가상환경 만들기(생성하기)
+1.명령프롬프트 실행 -> cd\ 입력(디렉토리변경하겠다) -> mkdir venvs(디렉토리만들겠다) -> cd venvs 
+
+2.가상환경만들기
+cd venvs >python - m venv mysite
+[참고] 가상 환경을 만들었다 해서 바로 가상 환경을 사용할 수는 없다. 
+가상환경을 사용하려면 가상환경에 진입을 해야한다.
+
+3.가상환경 진입하기
+C:\venvs\mysite\Scripts 폴더에 activate파일이 있다.
+C:\venvs>cd C:\venvs\mysite\Scripts
+C:\venvs\mysite\Scripts > activate 
+(mysite:가상환경이름)C:\venvs\mysite\Scripts>
+---------------------------------------------------
+
+4. mysite 가상환경에 장고(Django) 설치하기
+(mysite)C:\venvs\mysite\Scripts> pip(패키지관리자) install django==3.1.3
+(mysite) C:\venvs\mysite\Scripts> python -m pip install --upgrade pip :pip 최신버전으로 업그레이드 하겠다.
+
+5.장고 프로젝트 생성
+- 장고 프로젝트는 하나의 웹 사이트이다.
+- 프로젝트 안에는 여러 개의 앱(App-application)이 존재한다.
+
+앱(APP)이란? 로그인/로그아웃(인증앱),관리자앱->장고에 이미 준비되어 있다.
+            개발자가 직접 만든 앱 -> 게시판 등등
+
+
+(1)장고 프로젝트 디렉토리 생성
+명령프롬프트 하나를 실행시키고 
+C:\Users\user>cd\
+C:\>mkdir projects
+C:\>cd projects
+
+(2)프로젝트 루트(root) 디렉토리 안에서 가상환경 진입
+C:\projects> C:\venvs\mysite\Scripts\activate
+(mysite) C:\projects>
+
+(3)장고 프로젝트를 담을 디렉토리 생성하고 이동
+(mysite) C:\projects> mkdir mysite
+(mysite) C:\projects> cd mysite
+(mysite) C:\projects\mysite>
+
+(4)장고 프로젝트 생성
+[주의]마지막에 반드시 점(.)을 찍어야 함
+점(.)의 의미는 현재 디렉토리를 프로젝트 디렉토리로 만들겠다는 뜻
+(mysite)C:\projects\mysite> django-admin startproject config . 
+--------------------------------------------------------------------
+
+6.로컬 개발 서버 구동하고 웹 사이트에 접속
+(mysite) C:\projects\mysite> python manage.py runserver
+
+크롬 브라우저에서 http://127.0.0.1:8000/ 접속
+----------------------------------------------------------------------
+
+[참고]
+mysite 가상 환경에 진입하는 번거로운 작업을 좀 더 효율적으로 해결하는 방법
+-> 배치파일(=일괄파일) 만들기!!!
+   배치파일이란? 일련의 과정을 한 번에 수행할 수 있게 해주는 파일
+
+   메모장에서 만들기.위치가 제일 중요! C:\venvs 폴더에서 생성하자 -> 가상환경 디렉토리에 생성해줌
+
+   ***배치파일 생성시 주의사항 : 저장 시 파일 형식을 모든 파일로 설정하고 저장해야 한다.***
+   저장시 파일명 : mysite.cmd(배치파일은 cmd로 저장되야함)
+   @echo off 
+   cd c:/projects/mysite
+   c:/venvs/mysite/Scripts/activate
+ 
+------------------------------------------------------------------------------
+
+배치파일 만든 후 -> 배치파일 위치를 path 환경변수에 추가 시키기
+1.명령프롬프트 띄우기 : window키+R키 ->sysdm.cpl 입력 후 확인(시스템속성창 띄움) - 환경변수 설정
+-sysdm.cpl는 system divice manager.control panel applet 약자
+2.명령프롬프트 띄우기 : window키+R키 -> cmd 입력 후 확인
+
+----------------------------------------------------------------------------
+명령프롬프터에서 서버 구동하기
+(mysite) c:\projects\mysite>python manage.py runserver
+구글에서 http://loclahost:8000
+
+*파이참으로 장고 프로젝트를 불러온 후 가장 먼저 해야할 일
+1. 파이썬 인터프리터 위치를 가상 환경 위치로 수정하기
+
+----------------------------------------------------------------------------
+*개발자가 필요한 앱(APP)생성하기
+-질문/답변 게시판 구현->CRUD작업
+-게시판(board)
+-명령프롬프트 실행 -> mysite
+(mysite) c:\projects\mysite> django-admin startapp pybo(파일이름)
+
+--------------------------------------------------------------------------------------------------
+
+*config/urls.py 파일에 추가했고,pybo/view.py 파일에 추가한 다음
+클라이언트(브라우저)에서 페이지 요청 : http://localhost:8000/pybo 요청
+
+#추가(config/urls.py파일)
+path('pybo/',views/index),
+'pybo/'의 의미->localhost:8000/생략 가능. 생략가능한 이유는 서버가 구동하면 장고가 이미 알고 있기 때문에
+localhost:8000/pybo로 요청을 하면 장고가 자동으로 /를 붙여서 요청한다.
+->클라이언트(브라우저)에서 localhost:8000/pybo/ 이렇게 페이지 요청을 하면
+  views.index의 의미는 -> views.py파일의 index()함수와 매핑(연결)시켜라
+
+  -----------------------------------------------------
+
+URL conf란?
+사용자(user)와 view 사이에는 URL conf(URL설계)라는 단계가 있다.
+URL 패턴을 정의하여 URL과 View를 매핑한다.=>path()이용.
+
+*Path()의 문법
+path(route,view)
+     경로,views.index
+
+------------------------------------------------------
+*URL 분리하기
+(1)config/urls.py 수정
+from django.urls import path, include #include() 함수를 가져오겠다.
+
+path('pybo/', include('pybo.urls')),
+
+(2)pybo/urls.py 생성
+
+from.import views
+
+urlpatterns = [ path('',views.index),
+
+]
+-----------------------------------------------------
+path('',views.index), 이렇게 코딩한 이유
+config/urls.py       pybo/urls.py   => 최종URL
+--------------       ------------       
+'pybo/'           +    ''               'pybo/'
+------------------------------------------------------
+
+*데이터를 관리하는 모델
+장고는 모델로 데이터를 관리한다.
+[장점]
+아래와 같이 테이블을 생성하지 않아도 모델을 생성하면 자동으로 테이블을 생성한다.
+creat table users(자료형필드,...);
+
+(1) 장고 개발 서버 구동 시 경고 메세지를 살펴보면
+You have 18 unapplied migration(s). 이런 메세지가 뜬다.
+-> 아직 적용되지 않은 18개의 migration이 있다.
+
+'settings.py' 파일에서
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+BASE_DIR의 의미 -> C:/projects/mysite를 의미한다.
+
+(2) migration 명령으로 앱(App)이 필요로 하는 테이블 생성
+(mysite) c:\projects\mysite>python manage.py migrate
+
+(3) DB Browser for SQLite로 테이블이 실제 생성됐는지 확인하기
+sqlitebrowser.org/dl 접속 -> 'DB Browser for SQLite'을 내려받자.
+64비트 standard installer버전 다운받으면 됨
+프로그램 실행해서 데이터베이스 열기-> 프로젝트 만든 폴더 들어가서 sqlite파일 열면 table확인 가능!
+-----------------------------------------------------------------------
+*질문/답변 게시판 구현
+모델 생성 -> DB설계
+(1)개체(Entity) 발견 -> 질문,답변
+(2)개체의 속성발견
+'질문'의 속성 : 제목,내용,작성일시
+'답변'의 속성 : 질문, 답변내용, 답변 작성 일시
+(3)개체의 관계 설정
+- 1:1 관계
+- 1:다 관계
+- 다:다 관계
+------------------------------------------------------
+모델 생성하기
+pybo/models.py 작성
+
+[중요]
+on_delete=modeles.CASCADE
+=> 1(부모):다(자식) 관계일 때 , 부모쪽 삭제시 연결된 자식 모든 데이터 삭제
+on_delete=modles.PROTECT
+=>자식 쪽의 데이터가 있을 경우, 부모쪽의 데이터가 삭제 되지 않게 보호되어야 한다.
+
+2.config/setting.py 열어 pybo 앱 등록
+[이유] 모델을 이용해서 테이블 생성, 테이블을 생성하려면 config/settings.py에 
+INSTALLED_APPS에서 'pybo.apps.PyboConfig', 추가 
+
+3.pybo/apps.py파일 열어 확인
+from django.apps import AppConfig
+
+class PyboConfig(AppConfig):
+name='pybo'
+
+4. (mysite) c:\projects\mysite>python manage.py makemigrations
+Migrations for 'pybo':
+  pybo\migrations\0001_initial.py
+    - Create model Question
+    - Create model Answer
+[참고]
+migration이란?
+모델의 변경 내역을 DB스키마에 적용시키는 장고의 방법  
+스키마(schema)란? DB내에서 데이터가 저장되는 구조와 제약조건을 정의한 것
+
+** makemigrations 명령을 실행하면 아직 테이블이 생성된건 아니다.
+    -> migration 폴더에 밑에 0001_initial.py 파일 자동 생성된다.
+
+
+5. (mysite) c:\projects\mysite>python manage.py migrate 실행
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, pybo, sessions
+Running migrations:
+  Applying pybo.0001_initial... OK
+
+[중요] 테이블 생성 시-> 정규화 개념을 터득
+[결론] 클래스 모델을 만들고, 
+makemigrations명령어를 입력해서,
+DATABASE쪽에서 테이블을 생성할 수 있도록 migrare하기
+--------------------------------------------------------
+
+*모델 데이터 만들기
+(1)장고 셀(shell)실행
+ (mysite) c:\projects\mysite>python manage.py shell
+ (2)Question,Answer 모델 import
+ from pybo.models import Question,Answer
+ (3)Question 데이터 생성
+ from django.utils import timezone
+ q=Question(subject='장고가 무엇인가요?', content='장고에 대해서 알고 싶습니다.', create_date=timezone.now())
+q.save()
+
+(4)Question 모델 데이터의 id값 확인
+>>> q.id
+1
+>>> q.subject
+'장고가 무엇인가요?'
+>>> q.content
+'장고에 대해서 알고 싶습니다.'
+>>> q.create_date
+datetime.datetime(2023, 1, 4, 5, 19, 52, 723356, tzinfo=<UTC>)
+
+q=Question(subject='장고가 무엇인가요?', content='id는 자동으로 생성되나요?', create_date=timezone.now())
+q.save()
+
+(5)Question 모델 데이터 모두 조회하기
+Question.objects.all()=>데이터 유형만 출력=>
+
+(6)Question 모델 데이터 모두 조회 결과에 속성값 보기
+pybo/models.py 파일에 추가한
+   def__str__(self):
+      return self.subject
+
+모델이 수정되면 장고 셀을 재실행해야한다
+
+>>>>quit() : cmd종료할때 
+
+(mysite) c:\projects\mysite>python manage.py shell
+
+from pybo.models import Question,Answer
+Question.objects.all()
+<QuerySet[<] : 질문내용 나옴
+
+(7) 조건으로 Question 모델 데이터 조회하기
+Question.objects.filler(id=1)
+
+---------------------------------------
+(8)데이터 수정
+q = Question.objects.get(id=2)
+q
+<Question: 장고모델질문입니다.>
+
+q.subject='장고 모델 질문이 있습니다.'
+q.save()
+q
+----------------------------------------------------
+*answer모델 데이터 생성
+from django.utils import timezone
+a=Answer(question=q,content='네 자동으로 생성됩니다.',create_date=timezone.now())
+a.save()
+---------------------------------------------------
+
+*개발 편의를 제공하는 장고 admin
+(1)슈퍼유저생성
+(mysite) c:\projects\mysite>python manage.py createsuperuser
+
+(2)장고 admin 접속해서 로그인하기
+http://localhost:8000/admin
+
+(3)장고 Admin에서 모델 관리
+pybo/admin.py 파일에 Question 모델 등록
+
+==================================================================
+상속개념
+class 자식클래스(부모클래스):
+
+#admin.ModelAdmin 상속을 통해 커스터마이징이 가능하다.
+
+class QuestionAdmin(admin.ModelAdmin):
+    search_fields = ['subject']
+admin.site.register(Question,QuestionAdmin)
+
+[참고]
+ModelAdmin 클래스는 장고에서 제공하는 클래스이다.
+옵션들 
+search_fields : admin 내 검색 UI를 통해 DB를 통한 where절 쿼리대상 필드리스트를 의미한다.
+select*from Question where subject='장고';
+
+admin.site.register(Question,QuestionAdmin)
+-> Question,QuestionAdmin 두 모델을 admin사이트에 등록(register)하는 방법
+   관리자 사이트는 커스터마이즈 범위가 넓다.
+
+*커스터마이징(customizing)이란?
+-> 이용자 또는 개발자의 특수한요구와 환경에 맞게 솔루션 또는 프로그램의 기능을
+부분적으로 수정하여 개발 적용하는 것. 일종의 맞춤서비스 개념.
+-----------------------------------------------------------------------
+
+*질문목록과 상세 기능 구현
+(1)Question 모델 데이터 작성일시 역순(최근것부터)으로 조회
+pybo/views.py 파일에 추가
+
+(2)템플릿을 모아 저장할 디렉토리 생성(cmd창에서 해야함)
+(mysite) c:\projects\mysite>mkdir templates
+
+(3)템플릿 디렉토리 위치를 config/setting.py에 등록
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR/'templates'], #추가
+
+      위에서 BASE_DIR 은 C:/projects/mysite 의미
+      그러므로 [base_DIR/'templates'],의 의미는
+      C:/projects/mysite/templates를 의미한다.
+      [이유]장고는 templates 디렉토리를 자동으로 템플릿 디렉토리로 인식
+
+(4)템플릿 파일 생성
+templates
+  pybo 
+    question_list
+
+(5)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if question_list %} <!--question list가 있다면-->
+    <ul>
+    {% for question in question_list %} <!--question_list를 순회하며 순차적으로 하나씩 question에 대입-->
+        <li><a href="/pybo/{{question.id}}/">{{question.subject}}</a></li> #id와 제목을 출력
+    {% endfor %}
+    </ul>
+{%else%}
+    <p>질문이 없습니다.</p>
+{% endif %}
+</body>
+</html>
